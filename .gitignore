@@ -34,3 +34,4 @@ __pycache__/
 
 # Local tool caches
 .impeccable/
+.vscode/settings.json
