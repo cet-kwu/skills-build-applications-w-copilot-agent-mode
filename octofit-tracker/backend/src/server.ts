@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import "./config/database";
-import { PORT, API_BASE_URL, FRONTEND_BASE_URL } from "./config/env";
 import usersRouter from "./routes/users";
 import teamsRouter from "./routes/teams";
 import activitiesRouter from "./routes/activities";
@@ -10,6 +9,27 @@ import leaderboardRouter from "./routes/leaderboard";
 import workoutsRouter from "./routes/workouts";
 
 dotenv.config();
+
+const codespaceName = process.env.CODESPACE_NAME;
+
+const PORT = process.env.PORT || 8000;
+
+/**
+ * Public base URL for this API. When running inside a GitHub Codespace,
+ * ports are exposed at https://$CODESPACE_NAME-<port>.app.github.dev.
+ * Falls back to localhost when CODESPACE_NAME is not set.
+ */
+const API_BASE_URL = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev`
+  : `http://localhost:${PORT}`;
+
+/**
+ * Public base URL for the paired frontend (Vite dev server on port 5173),
+ * used to allow it as a CORS origin.
+ */
+const FRONTEND_BASE_URL = codespaceName
+  ? `https://${codespaceName}-5173.app.github.dev`
+  : "http://localhost:5173";
 
 const app = express();
 
