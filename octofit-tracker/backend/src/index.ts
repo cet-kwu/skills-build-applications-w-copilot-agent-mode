@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import "./config/database";
+import { PORT, API_BASE_URL, FRONTEND_BASE_URL } from "./config/env";
 import usersRouter from "./routes/users";
 import teamsRouter from "./routes/teams";
 import activitiesRouter from "./routes/activities";
@@ -11,15 +12,11 @@ import workoutsRouter from "./routes/workouts";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 8000;
 
-// Codespaces-aware base URL so the API can report/allow its own public origin.
-const codespaceName = process.env.CODESPACE_NAME;
-const baseUrl = codespaceName
-  ? `https://${codespaceName}-8000.app.github.dev`
-  : `http://localhost:${PORT}`;
-
-app.use(cors());
+const allowedOrigins = Array.from(
+  new Set([FRONTEND_BASE_URL, "http://localhost:5173"]),
+);
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => {
@@ -34,5 +31,5 @@ app.use("/api/workouts", workoutsRouter);
 
 app.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
-  console.log(`API base URL: ${baseUrl}`);
+  console.log(`API base URL: ${API_BASE_URL}`);
 });
